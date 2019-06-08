@@ -7,9 +7,12 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,7 +30,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response)
             {
-
+                StringBuilder localities = new StringBuilder();
+                try
+                {
+                    JSONArray data = response.getJSONArray("aliases");
+                    localities.append("Aliases"+"\n\n");
+                    for (int index = 0; index < data.length(); index++)
+                    {
+                        localities.append(data.get(index) + "\n");
+                    }
+                    System.err.println(data);
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+                textView.setText(localities.toString());
+            }
+        },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        textView.setText("That did not work!");
+                    }
+                });
+        queue.add(jsObjRequest);
 
 
             }
